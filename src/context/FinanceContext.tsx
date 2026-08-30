@@ -18,6 +18,7 @@ import { calculateFinancialSummary } from '@/utils/financialCalculations';
 
 interface FinanceContextType {
   user: any;
+  isLoaded: boolean;
   accounts: Account[];
   categories: Category[];
   incomeSources: IncomeSource[];
@@ -412,7 +413,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <FinanceContext.Provider
       value={{
-        user,
+        user, isLoaded,
         accounts, categories, incomeSources, budgets, goals, recurringTransactions, transactions, wishlistItems,
         summary, minInvestmentTarget, setMinInvestmentTarget,
         addTransaction, updateTransaction, deleteTransaction,
