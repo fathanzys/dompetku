@@ -5,6 +5,7 @@ import { useFinance } from '@/context/FinanceContext';
 import { formatCurrency } from '@/utils/financialCalculations';
 import { Target, Plus, Edit3, Trash2, X, AlertTriangle } from 'lucide-react';
 import { Goal } from '@/types';
+import { Modal } from '@/components/common/Modal';
 
 function formatNumberInput(val: string): string {
   const numeric = val.replace(/\D/g, '');
@@ -192,114 +193,104 @@ export default function GoalsPage() {
       </div>
 
       {/* Modal Add / Edit Goal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white border border-slate-200 w-full max-w-md my-auto rounded-3xl p-6 space-y-4 shadow-xl text-slate-800">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-slate-900">
-                {editingGoalId ? '✏️ Edit Target Tabungan' : '🎯 Tambah Target Baru'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-700">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveGoal} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-slate-600 mb-1.5 font-bold">Nama Target Impian</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Beli Laptop, Liburan, Motor Baru"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-600 mb-1.5 font-bold">Target Harga Total (Rp)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-3 text-slate-500 font-bold text-sm">Rp</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    required
-                    placeholder="10.000.000"
-                    value={targetPrice}
-                    onChange={(e) => setTargetPrice(formatNumberInput(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-600 mb-1.5 font-bold">Jumlah Yang Sudah Terkumpul (Rp)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-3 text-slate-500 font-bold text-sm">Rp</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="2.500.000"
-                    value={currentSaved}
-                    onChange={(e) => setCurrentSaved(formatNumberInput(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 font-bold focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 shadow-sm"
-                >
-                  Simpan Target
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingGoalId ? 'Edit Target Tabungan' : 'Tambah Target Baru'}
+        subtitle="Rencanakan target tabungan impian Anda"
+        icon={<Target className="w-5 h-5" />}
+      >
+        <form onSubmit={handleSaveGoal} className="space-y-4 text-xs">
+          <div>
+            <label className="block text-slate-600 mb-1.5 font-bold">Nama Target Impian</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Beli Laptop, Liburan, Motor Baru"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block text-slate-600 mb-1.5 font-bold">Target Harga Total (Rp)</label>
+            <div className="relative">
+              <span className="absolute left-4 top-3 text-slate-500 font-bold text-sm">Rp</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                required
+                placeholder="10.000.000"
+                value={targetPrice}
+                onChange={(e) => setTargetPrice(formatNumberInput(e.target.value))}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-slate-600 mb-1.5 font-bold">Jumlah Yang Sudah Terkumpul (Rp)</label>
+            <div className="relative">
+              <span className="absolute left-4 top-3 text-slate-500 font-bold text-sm">Rp</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="2.500.000"
+                value={currentSaved}
+                onChange={(e) => setCurrentSaved(formatNumberInput(e.target.value))}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 font-bold focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-1">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 py-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 shadow-sm"
+            >
+              Simpan Target
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 w-full max-w-sm rounded-3xl p-6 shadow-xl text-slate-800 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-rose-50">
-                <AlertTriangle className="w-6 h-6 text-rose-600" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-slate-900 text-sm">Hapus Target Ini?</h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Target <strong>"{goals.find(g => g.id === deleteConfirmId)?.name}"</strong> akan dihapus permanen dan tidak bisa dikembalikan.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 py-2.5 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleDeleteConfirmed}
-                className="flex-1 py-2.5 rounded-2xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700"
-              >
-                Ya, Hapus!
-              </button>
-            </div>
+      <Modal
+        isOpen={Boolean(deleteConfirmId)}
+        onClose={() => setDeleteConfirmId(null)}
+        title="Konfirmasi Hapus Target"
+        subtitle="Tindakan ini tidak dapat dikembalikan"
+        icon={<AlertTriangle className="w-5 h-5 text-rose-600" />}
+        maxWidthClass="max-w-sm"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-slate-600">
+            Apakah Anda yakin ingin menghapus target <strong>"{goals.find(g => g.id === deleteConfirmId)?.name}"</strong>?
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setDeleteConfirmId(null)}
+              className="flex-1 py-2.5 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleDeleteConfirmed}
+              className="flex-1 py-2.5 rounded-2xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700"
+            >
+              Ya, Hapus!
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

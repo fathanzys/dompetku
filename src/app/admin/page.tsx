@@ -23,6 +23,7 @@ import {
   SlidersHorizontal,
 } from 'lucide-react';
 import { IncomeSource, Account, Category, Goal, RecurringFrequency, AccountType, CategoryType } from '@/types';
+import { Modal } from '@/components/common/Modal';
 
 export default function AdminPanelPage() {
   const {
@@ -382,159 +383,152 @@ export default function AdminPanelPage() {
       )}
 
       {/* Modal Admin Input */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 space-y-4 shadow-xl text-slate-800">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-slate-900">
-                Tambah Data {activeTab.toUpperCase()}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-700">
-                <X className="w-5 h-5" />
-              </button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={`Tambah Data ${activeTab.toUpperCase()}`}
+        subtitle="Kelola master data finansial aplikasi"
+        icon={<SlidersHorizontal className="w-5 h-5" />}
+      >
+        {/* Income Form */}
+        {activeTab === 'income' && (
+          <form onSubmit={handleSaveIncome} className="space-y-3 text-xs">
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Nama Sumber Income</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Gaji Utama / Side Job"
+                value={incName}
+                onChange={(e) => setIncName(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
+              />
             </div>
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Nominal Pemasukan (Rp)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="5.000.000"
+                  value={incAmount}
+                  onChange={(e) => setIncAmount(fmtInput(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+            </div>
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
+              Simpan Income
+            </button>
+          </form>
+        )}
 
-            {/* Income Form */}
-            {activeTab === 'income' && (
-              <form onSubmit={handleSaveIncome} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Nama Sumber Income</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Gaji Utama / Side Job"
-                    value={incName}
-                    onChange={(e) => setIncName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Nominal Pemasukan (Rp)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      required
-                      placeholder="5.000.000"
-                      value={incAmount}
-                      onChange={(e) => setIncAmount(fmtInput(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                    />
-                  </div>
-                </div>
-                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
-                  Simpan Income
-                </button>
-              </form>
-            )}
+        {/* Outcome Form */}
+        {activeTab === 'outcome' && (
+          <form onSubmit={handleSaveCategory} className="space-y-3 text-xs">
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Nama Kategori Pengeluaran</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Makan &amp; Jajan"
+                value={catName}
+                onChange={(e) => setCatName(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
+              />
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Limit Budget Bulanan (Rp)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="1.500.000"
+                  value={catPlanned}
+                  onChange={(e) => setCatPlanned(fmtInput(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+            </div>
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
+              Simpan Kategori Outcome
+            </button>
+          </form>
+        )}
 
-            {/* Outcome Form */}
-            {activeTab === 'outcome' && (
-              <form onSubmit={handleSaveCategory} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Nama Kategori Pengeluaran</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Makan &amp; Jajan"
-                    value={catName}
-                    onChange={(e) => setCatName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Limit Budget Bulanan (Rp)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="1.500.000"
-                      value={catPlanned}
-                      onChange={(e) => setCatPlanned(fmtInput(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                    />
-                  </div>
-                </div>
-                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
-                  Simpan Kategori Outcome
-                </button>
-              </form>
-            )}
+        {/* Account Form */}
+        {activeTab === 'accounts' && (
+          <form onSubmit={handleSaveAccount} className="space-y-3 text-xs">
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Nama Akun / Rekening</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Bank BCA / GoPay"
+                value={accName}
+                onChange={(e) => setAccName(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
+              />
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Saldo Saat Ini (Rp)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="2.500.000"
+                  value={accBalance}
+                  onChange={(e) => setAccBalance(fmtInput(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+            </div>
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
+              Simpan Dompet/Akun
+            </button>
+          </form>
+        )}
 
-            {/* Account Form */}
-            {activeTab === 'accounts' && (
-              <form onSubmit={handleSaveAccount} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Nama Akun / Rekening</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Bank BCA / GoPay"
-                    value={accName}
-                    onChange={(e) => setAccName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Saldo Saat Ini (Rp)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      required
-                      placeholder="2.500.000"
-                      value={accBalance}
-                      onChange={(e) => setAccBalance(fmtInput(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                    />
-                  </div>
-                </div>
-                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
-                  Simpan Dompet/Akun
-                </button>
-              </form>
-            )}
-
-            {/* Goal Form */}
-            {activeTab === 'goals' && (
-              <form onSubmit={handleSaveGoal} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Nama Target Tabungan</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Beli Laptop Baru"
-                    value={goalName}
-                    onChange={(e) => setGoalName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-600 mb-1 font-semibold">Target Harga Total (Rp)</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      required
-                      placeholder="12.000.000"
-                      value={goalTarget}
-                      onChange={(e) => setGoalTarget(fmtInput(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                    />
-                  </div>
-                </div>
-                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
-                  Simpan Target
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
+        {/* Goal Form */}
+        {activeTab === 'goals' && (
+          <form onSubmit={handleSaveGoal} className="space-y-3 text-xs">
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Nama Target Tabungan</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Beli Laptop Baru"
+                value={goalName}
+                onChange={(e) => setGoalName(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm focus:outline-none focus:border-emerald-600"
+              />
+            </div>
+            <div>
+              <label className="block text-slate-600 mb-1 font-semibold">Target Harga Total (Rp)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  placeholder="12.000.000"
+                  value={goalTarget}
+                  onChange={(e) => setGoalTarget(fmtInput(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                />
+              </div>
+            </div>
+            <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
+              Simpan Target
+            </button>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }

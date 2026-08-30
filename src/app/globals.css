@@ -10,20 +10,33 @@
   }
 }
 
-/* Friendly smooth animations */
-@keyframes slideUpFade {
-  from {
+/* Modal Animations */
+@keyframes modalPop {
+  0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: scale(0.94) translateY(12px);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
 
-.animate-slideUp {
-  animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-modalPop {
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fadeInOverlay {
+  animation: fadeInOverlay 0.2s ease-out forwards;
 }
 
 /* Custom subtle scrollbar */
