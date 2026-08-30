@@ -3,6 +3,13 @@
 import React, { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { formatCurrency } from '@/utils/financialCalculations';
+
+function fmtInput(val: string): string {
+  return val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function parseFmt(val: string): number {
+  return parseFloat(val.replace(/\./g, '')) || 0;
+}
 import {
   Coins,
   ArrowDownRight,
@@ -83,98 +90,45 @@ export default function AdminPanelPage() {
 
   const handleSaveIncome = (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = parseFloat(incAmount);
-    if (isNaN(amt) || !incName) return;
-
+    const amt = parseFmt(incAmount);
+    if (!amt || !incName) return;
     if (editingId) {
-      updateIncomeSource(editingId, {
-        name: incName,
-        expectedAmount: amt,
-        frequency: incFreq,
-        destinationAccountId: incAccount || undefined,
-      });
+      updateIncomeSource(editingId, { name: incName, expectedAmount: amt, frequency: incFreq, destinationAccountId: incAccount || undefined });
     } else {
-      addIncomeSource({
-        name: incName,
-        expectedAmount: amt,
-        frequency: incFreq,
-        destinationAccountId: incAccount || undefined,
-        isActive: true,
-      });
+      addIncomeSource({ name: incName, expectedAmount: amt, frequency: incFreq, destinationAccountId: incAccount || undefined, isActive: true });
     }
     setIsModalOpen(false);
   };
 
   const handleSaveCategory = (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = parseFloat(catPlanned);
+    const amt = parseFmt(catPlanned);
     if (!catName) return;
-
-    addCategory({
-      name: catName,
-      type: catType,
-      isEssential: catType !== 'lifestyle',
-      color: '#059669',
-    });
-
-    if (!isNaN(amt) && amt > 0) {
-      addBudget({
-        categoryId: `cat-${Date.now()}`,
-        periodYear: 2026,
-        periodMonth: 9,
-        plannedAmount: amt,
-      });
-    }
-
+    addCategory({ name: catName, type: catType, isEssential: catType !== 'lifestyle', color: '#059669' });
+    if (amt > 0) addBudget({ categoryId: `cat-${Date.now()}`, periodYear: 2026, periodMonth: 9, plannedAmount: amt });
     setIsModalOpen(false);
   };
 
   const handleSaveAccount = (e: React.FormEvent) => {
     e.preventDefault();
-    const bal = parseFloat(accBalance);
-    if (isNaN(bal) || !accName) return;
-
+    const bal = parseFmt(accBalance);
+    if (!accName) return;
     if (editingId) {
-      updateAccount(editingId, {
-        name: accName,
-        type: accType,
-        balance: bal,
-      });
+      updateAccount(editingId, { name: accName, type: accType, balance: bal });
     } else {
-      addAccount({
-        name: accName,
-        type: accType,
-        institution: accName,
-        balance: bal,
-        currency: 'IDR',
-        isActive: true,
-      });
+      addAccount({ name: accName, type: accType, institution: accName, balance: bal, currency: 'IDR', isActive: true });
     }
     setIsModalOpen(false);
   };
 
   const handleSaveGoal = (e: React.FormEvent) => {
     e.preventDefault();
-    const target = parseFloat(goalTarget);
-    if (isNaN(target) || !goalName) return;
-
+    const target = parseFmt(goalTarget);
+    if (!target || !goalName) return;
     if (editingId) {
-      updateGoal(editingId, {
-        name: goalName,
-        targetPrice: target,
-        currentSavedAmount: parseFloat(goalSaved) || 0,
-      });
+      updateGoal(editingId, { name: goalName, targetPrice: target, currentSavedAmount: parseFmt(goalSaved) });
     } else {
-      addGoal({
-        name: goalName,
-        targetPrice: target,
-        resaleValueExpected: 0,
-        currentSavedAmount: parseFloat(goalSaved) || 0,
-        targetDate: '2027-12-31',
-        priority: 1,
-        isEmergencyFund: false,
-        status: 'active',
-      });
+      addGoal({ name: goalName, targetPrice: target, resaleValueExpected: 0, currentSavedAmount: parseFmt(goalSaved), targetDate: '2027-12-31', priority: 1, isEmergencyFund: false, status: 'active' });
     }
     setIsModalOpen(false);
   };
@@ -456,19 +410,20 @@ export default function AdminPanelPage() {
                 </div>
                 <div>
                   <label className="block text-slate-600 mb-1 font-semibold">Nominal Pemasukan (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. 5000000"
-                    value={incAmount}
-                    onChange={(e) => setIncAmount(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      required
+                      placeholder="5.000.000"
+                      value={incAmount}
+                      onChange={(e) => setIncAmount(fmtInput(e.target.value))}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                    />
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs"
-                >
+                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
                   Simpan Income
                 </button>
               </form>
@@ -490,18 +445,19 @@ export default function AdminPanelPage() {
                 </div>
                 <div>
                   <label className="block text-slate-600 mb-1 font-semibold">Limit Budget Bulanan (Rp)</label>
-                  <input
-                    type="number"
-                    placeholder="e.g. 1500000"
-                    value={catPlanned}
-                    onChange={(e) => setCatPlanned(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="1.500.000"
+                      value={catPlanned}
+                      onChange={(e) => setCatPlanned(fmtInput(e.target.value))}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                    />
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs"
-                >
+                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
                   Simpan Kategori Outcome
                 </button>
               </form>
@@ -523,19 +479,20 @@ export default function AdminPanelPage() {
                 </div>
                 <div>
                   <label className="block text-slate-600 mb-1 font-semibold">Saldo Saat Ini (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. 2500000"
-                    value={accBalance}
-                    onChange={(e) => setAccBalance(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      required
+                      placeholder="2.500.000"
+                      value={accBalance}
+                      onChange={(e) => setAccBalance(fmtInput(e.target.value))}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                    />
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs"
-                >
+                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
                   Simpan Dompet/Akun
                 </button>
               </form>
@@ -557,19 +514,20 @@ export default function AdminPanelPage() {
                 </div>
                 <div>
                   <label className="block text-slate-600 mb-1 font-semibold">Target Harga Total (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. 12000000"
-                    value={goalTarget}
-                    onChange={(e) => setGoalTarget(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      required
+                      placeholder="12.000.000"
+                      value={goalTarget}
+                      onChange={(e) => setGoalTarget(fmtInput(e.target.value))}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-slate-900 text-sm font-bold focus:outline-none focus:border-emerald-600"
+                    />
+                  </div>
                 </div>
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs"
-                >
+                <button type="submit" className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs">
                   Simpan Target
                 </button>
               </form>
