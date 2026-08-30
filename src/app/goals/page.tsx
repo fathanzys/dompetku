@@ -193,8 +193,8 @@ export default function GoalsPage() {
 
       {/* Modal Add / Edit Goal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 space-y-4 shadow-xl text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white border border-slate-200 w-full max-w-md my-auto rounded-3xl p-6 space-y-4 shadow-xl text-slate-800">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-base text-slate-900">
                 {editingGoalId ? '✏️ Edit Target Tabungan' : '🎯 Tambah Target Baru'}

@@ -60,45 +60,39 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
-      {/* Backdrop overlay */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto">
+      {/* Click outside backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Modal Sheet Card */}
-      <div className="relative z-10 w-full max-w-lg max-h-[85vh] sm:max-h-[90vh] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-800 border border-slate-200 animate-slideUp mb-0 sm:mb-auto">
+      {/* Modal Box */}
+      <div className="relative z-10 w-full max-w-md my-auto bg-white rounded-3xl shadow-2xl border border-slate-200 text-slate-800 animate-slideUp overflow-hidden flex flex-col max-h-[85vh]">
         
-        {/* Top Handle + Header (Fixed) */}
-        <div className="shrink-0 bg-slate-50 border-b border-slate-100">
-          <div className="pt-2.5 pb-1 flex justify-center">
-            <div className="w-12 h-1 bg-slate-300 rounded-full" />
-          </div>
-
-          <div className="flex items-center justify-between px-5 py-3">
-            <div className="flex items-center gap-2.5">
-              <div className={`p-2 rounded-xl ${
-                type === 'income' ? 'bg-emerald-100 text-emerald-700' :
-                type === 'expense' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
-              }`}>
-                {type === 'income' ? <ArrowUpRight className="w-4 h-4" /> :
-                 type === 'expense' ? <ArrowDownRight className="w-4 h-4" /> : <ArrowRightLeft className="w-4 h-4" />}
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-slate-900 leading-none">Catat Transaksi</h3>
-                <p className="text-[10px] text-slate-400 font-medium mt-0.5">Isi data transaksi finansial Anda</p>
-              </div>
+        {/* Header */}
+        <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50">
+          <div className="flex items-center gap-2.5">
+            <div className={`p-2 rounded-xl ${
+              type === 'income' ? 'bg-emerald-100 text-emerald-700' :
+              type === 'expense' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
+            }`}>
+              {type === 'income' ? <ArrowUpRight className="w-4 h-4" /> :
+               type === 'expense' ? <ArrowDownRight className="w-4 h-4" /> : <ArrowRightLeft className="w-4 h-4" />}
             </div>
-
-            <button
-              onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div>
+              <h3 className="font-extrabold text-sm text-slate-900 leading-none">Catat Transaksi</h3>
+              <p className="text-[10px] text-slate-400 font-medium mt-0.5">Isi data transaksi finansial Anda</p>
+            </div>
           </div>
+
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Form Body (Scrollable inside max-h) */}
-        <form onSubmit={handleSubmit} id="quick-tx-form" className="flex-1 overflow-y-auto p-5 space-y-4">
+        {/* Scrollable Form Body */}
+        <form onSubmit={handleSubmit} id="quick-tx-form" className="flex-1 overflow-y-auto p-5 space-y-3.5">
           {/* Type Selector Pills */}
           <div>
             <label className="block text-[10px] font-extrabold text-slate-400 mb-1.5 uppercase tracking-wider">
@@ -113,7 +107,7 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                     key={btn.type}
                     type="button"
                     onClick={() => setType(btn.type)}
-                    className={`flex items-center justify-center gap-1 py-2 px-2 rounded-xl border text-[11px] font-bold transition-all active:scale-95 ${
+                    className={`flex items-center justify-center gap-1 py-2 px-1.5 rounded-xl border text-[11px] font-bold transition-all active:scale-95 ${
                       isSelected
                         ? btn.activeStyle
                         : 'border-slate-200/80 bg-slate-50/50 text-slate-600 hover:bg-slate-100'
@@ -127,13 +121,13 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
             </div>
           </div>
 
-          {/* Nominal Input with Dot Formatting */}
+          {/* Nominal Input */}
           <div>
             <label className="block text-xs font-extrabold text-slate-700 mb-1">
               Nominal Transaksi (Rp)
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-3 text-slate-400 font-extrabold text-base">Rp</span>
+              <span className="absolute left-3.5 top-2.5 text-slate-400 font-extrabold text-base">Rp</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -141,13 +135,13 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                 placeholder="100.000"
                 value={formattedAmount}
                 onChange={(e) => setFormattedAmount(formatNumberInput(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-900 font-black text-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 transition-all"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-900 font-black text-base focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 transition-all"
               />
             </div>
           </div>
 
-          {/* Account & Category/Target Selectors */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Account & Target Selectors */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
               <label className="block text-[11px] font-bold text-slate-600 mb-1 flex items-center gap-1">
                 <Wallet className="w-3 h-3 text-slate-400" />
@@ -156,7 +150,7 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
               <select
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
               >
                 {accounts.map((acc) => (
                   <option key={acc.id} value={acc.id}>
@@ -175,7 +169,7 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                 <select
                   value={targetAccountId}
                   onChange={(e) => setTargetAccountId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
                 >
                   {accounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -190,7 +184,7 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                 <select
                   value={goalId}
                   onChange={(e) => setGoalId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
                 >
                   {goals.map((g) => (
                     <option key={g.id} value={g.id}>
@@ -205,7 +199,7 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                 <select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -218,18 +212,18 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
           </div>
 
           {/* Description & Date */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
               <label className="block text-[11px] font-bold text-slate-600 mb-1 flex items-center gap-1">
                 <FileText className="w-3 h-3 text-slate-400" />
-                <span>Keterangan / Catatan</span>
+                <span>Keterangan</span>
               </label>
               <input
                 type="text"
-                placeholder="misal: Makan Siang, Bensin"
+                placeholder="misal: Makan Siang"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
@@ -241,29 +235,27 @@ export const QuickTransactionModal: React.FC<Props> = ({ onClose, defaultType = 
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
+
+          {/* Action Button inside Form */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              className={`w-full py-3 rounded-2xl text-white font-extrabold text-xs shadow-md transition-all active:scale-98 ${
+                type === 'income'
+                  ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20'
+                  : type === 'expense'
+                  ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20'
+                  : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
+              }`}
+            >
+              Simpan Transaksi
+            </button>
+          </div>
         </form>
-
-        {/* Submit Button Bar (Fixed at bottom of modal) */}
-        <div className="shrink-0 p-4 border-t border-slate-100 bg-white">
-          <button
-            type="submit"
-            form="quick-tx-form"
-            className={`w-full py-3.5 rounded-2xl text-white font-extrabold text-xs shadow-md transition-all active:scale-98 ${
-              type === 'income'
-                ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20'
-                : type === 'expense'
-                ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20'
-                : 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
-            }`}
-          >
-            Simpan Transaksi
-          </button>
-        </div>
-
       </div>
     </div>
   );
