@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sparkles, Mail, Lock, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,16 +11,36 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleAuth = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
-    // Simulate login for frontend demo (ready to hook to supabase.auth.signInWithPassword)
-    setTimeout(() => {
+    try {
+      if (isRegister) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        // Since confirm email is disabled, user should be signed in or ready to sign in.
+        // Usually, signUp logs the user in automatically if email confirm is off.
+        router.push('/');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        router.push('/');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Terjadi kesalahan saat autentikasi.');
+    } finally {
       setLoading(false);
-      router.push('/');
-    }, 600);
+    }
   };
 
   return (
@@ -34,9 +55,16 @@ export default function LoginPage() {
             {isRegister ? 'Buat Akun Baru' : 'Masuk Ke DompetKu'}
           </h1>
           <p className="text-xs text-slate-500 font-medium">
-            Personal Finance Operating System (Single-User Auth)
+            Personal Finance Operating System terhubung ke Cloud
           </p>
         </div>
+
+        {errorMsg && (
+          <div className="bg-red-50 text-red-600 text-xs p-3 rounded-xl border border-red-100 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
 
         {/* Auth Form */}
         <form onSubmit={handleAuth} className="space-y-4 text-xs">
@@ -73,7 +101,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all active:scale-98"
+            className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-70"
           >
             <span>{loading ? 'Memproses...' : isRegister ? 'Daftar Akun Baru' : 'Masuk Ke Dashboard'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -85,7 +113,10 @@ export default function LoginPage() {
           <span>{isRegister ? 'Sudah punya akun?' : 'Belum punya akun?'} </span>
           <button
             type="button"
-            onClick={() => setIsRegister(!isRegister)}
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setErrorMsg(null);
+            }}
             className="text-emerald-700 font-bold hover:underline"
           >
             {isRegister ? 'Masuk di sini' : 'Daftar sekarang'}
