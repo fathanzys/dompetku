@@ -94,7 +94,7 @@ export const Modal: React.FC<ModalProps> = ({
             </div>
 
             {/* Scrollable Content Body */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+            <div className="shrink overflow-y-auto p-5 sm:p-6 space-y-4">
               {children}
             </div>
           </div>
